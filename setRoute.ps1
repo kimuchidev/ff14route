@@ -3,7 +3,7 @@ $logFile = 'template.log'
 $gateWayMask = '255.255.255.0'
 
 function deleteRouteSetting(){
-    Write-Host 譌｢蟄倩ｨｭ螳壹ｒ蜑企勁縺励∪縺吮ｦ
+    Write-Host 既存設定を削除します…
     route delete $gameIp
 }
 
@@ -15,7 +15,7 @@ function addRouteSetting(){
     | ForEach-Object { $_.Matches.Groups[0].Value }
     Remove-Item $logFile
 
-    Write-Host -NoNewline $gameIp 縺ｸ縺ｮ謗･邯壹�ｯ $gateWayIp 繧堤ｵ檎罰縺吶ｋ繧医≧縺ｫ險ｭ螳壹＠縺ｾ縺吮ｦ
+    Write-Host -NoNewline $gameIp への接続は $gateWayIp を経由するように設定します…
     Write-Host 
     route -p add $gameIp MASK $gateWayMask $gateWayIp
 }

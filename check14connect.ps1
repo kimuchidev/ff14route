@@ -3,27 +3,27 @@ $logFile = 'template.log'
 $gateWayMask = '255.255.255.0'
     
 function check14Connect(){
-    Write-Host FF14ã®æ¥ç¶šã‚’ç¢ºèªã—ã¾ã™â€¦
+    Write-Host FF14‚ÌÚ‘±‚ğŠm”F‚µ‚Ü‚·c
     netstat -ano|findstr "124.150.157" >$logFile
     $connected = select-string -Path $logFile -Pattern '^.*192\.168\.43\.\d{1,3}.+124\.150\.157\.\d{1,3}.+ESTABLISHED.+$' -AllMatches -Encoding default
     Remove-Item $logFile
 
     if([string]::IsNullOrEmpty($connected)){
-        Write-Host "NGï¼šFF14ã¯ãƒ†ã‚¶ãƒªãƒ³ã‚°ã«æ¥ç¶šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚"
-        Write-Host "   å†åº¦ãƒ­ã‚°ã‚¤ãƒ³ã—ãªãŠã—ã¦ç¢ºèªã—ã¦ãã ã•ã„ã€‚"
-        Write-Host "   å†ãƒ­ã‚°ã‚¤ãƒ³ã§ã‚‚è§£æ¶ˆã•ã‚Œãªã„å ´åˆã¯ä¸€åº¦æœ‰ç·šã‚±ãƒ¼ãƒ–ãƒ«ã‚’æŠœã„ã¦è¦‹ã¦ãã ã•ã„ã€‚"
+        Write-Host "NGFFF14‚ÍƒeƒUƒŠƒ“ƒO‚ÉÚ‘±‚³‚ê‚Ä‚¢‚Ü‚¹‚ñB"
+        Write-Host "   Ä“xƒƒOƒCƒ“‚µ‚È‚¨‚µ‚ÄŠm”F‚µ‚Ä‚­‚¾‚³‚¢B"
+        Write-Host "   ÄƒƒOƒCƒ“‚Å‚à‰ğÁ‚³‚ê‚È‚¢ê‡‚Íˆê“x—LüƒP[ƒuƒ‹‚ğ”²‚¢‚ÄŒ©‚Ä‚­‚¾‚³‚¢B"
 
-        Write-Host "10ç§’å¾Œã«å†åº¦æ¥ç¶šç¢ºèªã‚’å®Ÿæ–½ã—ã¾ã™ã€‚(Ctrl+C ã§å‡¦ç†ã‚’ä¸­æ­¢ã§ãã¾ã™)"
+        Write-Host "10•bŒã‚ÉÄ“xÚ‘±Šm”F‚ğÀ{‚µ‚Ü‚·B(Ctrl+C ‚Åˆ—‚ğ’†~‚Å‚«‚Ü‚·)"
         Start-Sleep -s 10
         Write-Host ==================================================
         check14Connect
     }else{
-        Write-Host "OKï¼šFF14ã¯ãƒ†ã‚¶ãƒªãƒ³ã‚°ã«æ¥ç¶šã•ã‚Œã¦ã„ã¾ã™ã€‚"
+        Write-Host "OKFFF14‚ÍƒeƒUƒŠƒ“ƒO‚ÉÚ‘±‚³‚ê‚Ä‚¢‚Ü‚·B"
     }
 }
 
 function checkRouteSetting(){
-    Write-Host ãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šã‚’ç¢ºèªã—ã¾ã™â€¦
+    Write-Host ƒ‹[ƒ^[İ’è‚ğŠm”F‚µ‚Ü‚·c
     route print >$logFile
     $routedIp = select-string -Path $logFile -Pattern '^.*124\.150\.157\.0.+255\.255\.255\.0.+192\.168\.43\.\d{1,3}.+1.+$' -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
@@ -37,22 +37,22 @@ function checkRouteSetting(){
 
 
     if([string]::IsNullOrEmpty($routedIp)){
-        Write-Host "NGï¼šãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šãŒæ­£å¸¸ã«å‹•ä½œã—ã¦ã„ã¾ã›ã‚“ã€‚"
+        Write-Host "NGFƒ‹[ƒ^[İ’è‚ª³í‚É“®ì‚µ‚Ä‚¢‚Ü‚¹‚ñB"
     }else{
         if($routedIp -eq $gateWayIp){
-            Write-Host "OKï¼šãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šã¯æ­£å¸¸ã§ã™ã€‚"
+            Write-Host "OKFƒ‹[ƒ^[İ’è‚Í³í‚Å‚·B"
         }else{
-            Write-Host "NGï¼šãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šIPã¨ãƒ†ã‚¶ãƒªãƒ³ã‚°GatewayãŒä¸€è‡´ã—ã¾ã›ã‚“ã€‚"
+            Write-Host "NGFƒ‹[ƒ^[İ’èIP‚ÆƒeƒUƒŠƒ“ƒOGateway‚ªˆê’v‚µ‚Ü‚¹‚ñB"
             Write-Host "   - routedIp:"$routedIp
             Write-Host "   - gateWayIp:"$gateWayIp
             
-            $doSetRoute = (Read-Host ãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šã‚’å®Ÿè¡Œã—ã¾ã™ã‹ï¼Ÿï¼ˆâ€»ç®¡ç†è€…æ¨©é™ãŒå¿…è¦ã§ã™ï¼‰ï¼ˆY/Nï¼‰)
+            $doSetRoute = (Read-Host ƒ‹[ƒ^[İ’è‚ğÀs‚µ‚Ü‚·‚©Hi¦ŠÇ—ÒŒ ŒÀ‚ª•K—v‚Å‚·jiY/Nj)
             if($doSetRoute -eq 'Y'){
-                Write-Host "ãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šã‚’å®Ÿè¡Œã—ã¾ã™ã€‚ç®¡ç†è€…æ¨©é™ã‚’è¨±å¯ã—ã¦ãã ã•ã„ã€‚"
+                Write-Host "ƒ‹[ƒ^[İ’è‚ğÀs‚µ‚Ü‚·BŠÇ—ÒŒ ŒÀ‚ğ‹–‰Â‚µ‚Ä‚­‚¾‚³‚¢B"
                 setRoute
                 checkRouteSetting
             }else{
-                Write-Host "ã§ã¯ç¢ºèªå‡¦ç†ã‚’ä¸­æ­¢ã—ã¾ã™ã€‚"
+                Write-Host "‚Å‚ÍŠm”Fˆ—‚ğ’†~‚µ‚Ü‚·B"
                 Pause
                 exit
             }
@@ -65,10 +65,10 @@ function setRoute(){
         $setRoutePsPath = Convert-Path setRoute.ps1
         Start-Process powershell.exe "-File $setRoutePsPath" -Verb RunAs
     }else{
-        Write-Host "ç¾åœ¨ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã«ã¯ç®¡ç†è€…æ¨©é™ãŒãªã„ãŸã‚ã€routeè¨­å®šãŒè¡Œãˆã¾ã›ã‚“ã€‚"
+        Write-Host "Œ»İ‚Ìƒ†[ƒU[‚É‚ÍŠÇ—ÒŒ ŒÀ‚ª‚È‚¢‚½‚ßArouteİ’è‚ªs‚¦‚Ü‚¹‚ñB"
     }
 
-    Write-Host "routeè¨­å®šã‚’å¾…ã¡ã¾ã™â€¦ã€‚ï¼ˆ10ç§’å¾Œã«ãƒ«ãƒ¼ã‚¿ãƒ¼è¨­å®šã‚’å†ç¢ºèªã—ã¾ã™ã€‚ï¼‰"
+    Write-Host "routeİ’è‚ğ‘Ò‚¿‚Ü‚·cBi10•bŒã‚Éƒ‹[ƒ^[İ’è‚ğÄŠm”F‚µ‚Ü‚·Bj"
     Start-Sleep -s 10
 }
 
