@@ -5,7 +5,7 @@ $gateWayMask = '255.255.255.0'
 function check14Connect(){
     Write-Host FF14の接続を確認します…
     netstat -ano|findstr "124.150.157" >$logFile
-    $connected = select-string -Path $logFile -Pattern '^.*192\.168\.43\.\d{1,3}.+124\.150\.157\.\d{1,3}.+ESTABLISHED.+$' -AllMatches -Encoding default
+    $connected = select-string -Path $logFile -Pattern '^.*192\.168\.42\.\d{1,3}.+124\.150\.157\.\d{1,3}.+ESTABLISHED.+$' -AllMatches -Encoding default
     Remove-Item $logFile
 
     if([string]::IsNullOrEmpty($connected)){
@@ -25,19 +25,20 @@ function check14Connect(){
 function checkRouteSetting(){
     Write-Host ルーター設定を確認します…
     route print >$logFile
-    $routedIp = select-string -Path $logFile -Pattern '^.*124\.150\.157\.0.+255\.255\.255\.0.+192\.168\.43\.\d{1,3}.+1.+$' -AllMatches -Encoding default `
+    $routedIp = select-string -Path $logFile -Pattern '^.*124\.150\.157\.0.+255\.255\.255\.0.+192\.168\.42\.\d{1,3}.+1.+$' -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
-    | select-string -Pattern '192\.168\.43\.\d{1,3}' `
+    | select-string -Pattern '192\.168\.42\.\d{1,3}' `
     | ForEach-Object { $_.Matches.Groups[0].Value }
-    $gateWayIp = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.43\.\d{1,3}.+192\.168\.43\.\d{1,3}.+$' -AllMatches -Encoding default `
+    $gateWayIp = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.42\.\d{1,3}.+192\.168\.42\.\d{1,3}.+$' -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
-    | select-string -Pattern '192\.168\.43\.\d{1,3}' `
+    | select-string -Pattern '192\.168\.42\.\d{1,3}' `
     | ForEach-Object { $_.Matches.Groups[0].Value }
     Remove-Item $logFile
 
 
     if([string]::IsNullOrEmpty($routedIp)){
         Write-Host "NG：ルーター設定が正常に動作していません。"
+        checkIfSetRoute
     }else{
         if($routedIp -eq $gateWayIp){
             Write-Host "OK：ルーター設定は正常です。"
@@ -45,18 +46,21 @@ function checkRouteSetting(){
             Write-Host "NG：ルーター設定IPとテザリングGatewayが一致しません。"
             Write-Host "   - routedIp:"$routedIp
             Write-Host "   - gateWayIp:"$gateWayIp
-            
-            $doSetRoute = (Read-Host ルーター設定を実行しますか？（※管理者権限が必要です）（Y/N）)
-            if($doSetRoute -eq 'Y'){
-                Write-Host "ルーター設定を実行します。管理者権限を許可してください。"
-                setRoute
-                checkRouteSetting
-            }else{
-                Write-Host "では確認処理を中止します。"
-                Pause
-                exit
-            }
+            checkIfSetRoute
         }
+    }
+}
+
+function checkIfSetRoute(){
+    $doSetRoute = (Read-Host ルーター設定を実行しますか？（※管理者権限が必要です）（Y/N）)
+    if($doSetRoute -eq 'Y'){
+        Write-Host "ルーター設定を実行します。管理者権限を許可してください。"
+        setRoute
+        checkRouteSetting
+    }else{
+        Write-Host "では確認処理を中止します。"
+        Pause
+        exit
     }
 }
 

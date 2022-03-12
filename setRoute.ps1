@@ -9,9 +9,9 @@ function deleteRouteSetting(){
 
 function addRouteSetting(){
     route print >$logFile
-    $gateWayIp = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.43\.\d{1,3}.+192\.168\.43\.\d{1,3}.+$' -AllMatches -Encoding default `
+    $gateWayIp = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.42\.\d{1,3}.+192\.168\.42\.\d{1,3}.+$' -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
-    | select-string -Pattern '192\.168\.43\.\d{1,3}' `
+    | select-string -Pattern '192\.168\.42\.\d{1,3}' `
     | ForEach-Object { $_.Matches.Groups[0].Value }
     Remove-Item $logFile
 
