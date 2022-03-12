@@ -5,7 +5,7 @@ $gateWayMask = '255.255.255.0'
 function check14Connect(){
     Write-Host FF14の接続を確認します…
     netstat -ano|findstr "124.150.157" >$logFile
-    $connected = select-string -Path $logFile -Pattern '^.*192\.168\.42\.\d{1,3}.+124\.150\.157\.\d{1,3}.+ESTABLISHED.+$' -AllMatches -Encoding default
+    $connected = select-string -Path $logFile -Pattern '^.*192\.168\.4[2,3]\.\d{1,3}.+124\.150\.157\.\d{1,3}.+ESTABLISHED.+$' -AllMatches -Encoding default
     Remove-Item $logFile
 
     if([string]::IsNullOrEmpty($connected)){
@@ -29,24 +29,43 @@ function checkRouteSetting(){
     | ForEach-Object { $_.Matches.Groups[0].Value } `
     | select-string -Pattern '192\.168\.42\.\d{1,3}' `
     | ForEach-Object { $_.Matches.Groups[0].Value }
+    $routedIpWifi = select-string -Path $logFile -Pattern '^.*124\.150\.157\.0.+255\.255\.255\.0.+192\.168\.43\.\d{1,3}.+1.+$' -AllMatches -Encoding default `
+    | ForEach-Object { $_.Matches.Groups[0].Value } `
+    | select-string -Pattern '192\.168\.43\.\d{1,3}' `
+    | ForEach-Object { $_.Matches.Groups[0].Value }
     $gateWayIp = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.42\.\d{1,3}.+192\.168\.42\.\d{1,3}.+$' -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
     | select-string -Pattern '192\.168\.42\.\d{1,3}' `
     | ForEach-Object { $_.Matches.Groups[0].Value }
+    $gateWayIpWifi = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.43\.\d{1,3}.+192\.168\.43\.\d{1,3}.+$' -AllMatches -Encoding default `
+    | ForEach-Object { $_.Matches.Groups[0].Value } `
+    | select-string -Pattern '192\.168\.43\.\d{1,3}' `
+    | ForEach-Object { $_.Matches.Groups[0].Value }
     Remove-Item $logFile
 
 
-    if([string]::IsNullOrEmpty($routedIp)){
+    if([string]::IsNullOrEmpty($routedIp) -And [string]::IsNullOrEmpty($routedIpWifi)){
         Write-Host "NG：ルーター設定が正常に動作していません。"
         checkIfSetRoute
     }else{
-        if($routedIp -eq $gateWayIp){
-            Write-Host "OK：ルーター設定は正常です。"
+        if([string]::IsNullOrEmpty($routedIpWifi)){
+            if(($routedIp -eq $gateWayIp)){
+                Write-Host "OK：ルーター設定は正常です。"
+            }else{
+                Write-Host "NG：ルーター設定IPとテザリングGatewayが一致しません。"
+                Write-Host "   - routedIp:"$routedIp $routedIpWifi 
+                Write-Host "   - gateWayIp:"$gateWayIp $gateWayIpWifi 
+                checkIfSetRoute
+            }
         }else{
-            Write-Host "NG：ルーター設定IPとテザリングGatewayが一致しません。"
-            Write-Host "   - routedIp:"$routedIp
-            Write-Host "   - gateWayIp:"$gateWayIp
-            checkIfSetRoute
+            if(($routedIpWifi -eq $gateWayIpWifi)){
+                Write-Host "OK：ルーター設定は正常です。"
+            }else{
+                Write-Host "NG：ルーター設定IPとテザリングGatewayが一致しません。"
+                Write-Host "   - routedIp:"$routedIp $routedIpWifi 
+                Write-Host "   - gateWayIp:"$gateWayIp $gateWayIpWifi 
+                checkIfSetRoute
+            }
         }
     }
 }
