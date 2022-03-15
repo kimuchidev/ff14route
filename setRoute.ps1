@@ -27,9 +27,13 @@ function addRouteSetting(){
         Write-Host 
         route -p add $gameIp MASK $gateWayMask $gateWayIp
     }else{
-        Write-Host -NoNewline $gameIp への接続は $gateWayIpWifi を経由するように設定します…
-        Write-Host 
-        route -p add $gameIp MASK $gateWayMask $gateWayIpWifi
+        if([string]::IsNullOrEmpty($gateWayIpWifi)){
+            Write-Host -NoNewline $gameIp への接続は $gateWayIpWifi を経由するように設定します…
+            Write-Host 
+            route -p add $gameIp MASK $gateWayMask $gateWayIpWifi
+        }else{
+            Write-Host テザリング回線を検知できませんでした。テザリングに接続されているかをご確認ください。
+        }
     }
 }
 
