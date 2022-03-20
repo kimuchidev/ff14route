@@ -22,12 +22,12 @@ function addRouteSetting(){
 
     Remove-Item $logFile
 
-    if([string]::IsNullOrEmpty($gateWayIpWifi)){
+    if(![string]::IsNullOrEmpty($gateWayIp)){
         Write-Host -NoNewline $gameIp への接続は $gateWayIp を経由するように設定します…
         Write-Host 
         route -p add $gameIp MASK $gateWayMask $gateWayIp
     }else{
-        if([string]::IsNullOrEmpty($gateWayIpWifi)){
+        if(![string]::IsNullOrEmpty($gateWayIpWifi)){
             Write-Host -NoNewline $gameIp への接続は $gateWayIpWifi を経由するように設定します…
             Write-Host 
             route -p add $gameIp MASK $gateWayMask $gateWayIpWifi
