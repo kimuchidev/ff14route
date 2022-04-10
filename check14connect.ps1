@@ -22,6 +22,24 @@ function check14Connect(){
     }
 }
 
+function checkMetricSetting(){
+    Write-Host メトリック設定を確認します…
+    route print >$logFile
+    $metricSettedLan = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.42\.\d{1,3}.+192\.168\.42\.\d{1,3}.+9999.*$' -AllMatches -Encoding default `
+    | ForEach-Object { $_.Matches.Groups[0].Value }
+    $metricSettedWifi = select-string -Path $logFile -Pattern '^.*0\.0\.0\.0.+0\.0\.0\.0.+192\.168\.43\.\d{1,3}.+192\.168\.43\.\d{1,3}.+9999.*$' -AllMatches -Encoding default `
+    | ForEach-Object { $_.Matches.Groups[0].Value }
+    Remove-Item $logFile
+
+    if([string]::IsNullOrEmpty($metricSettedLan) -And [string]::IsNullOrEmpty($metricSettedWifi)){
+        Write-Host "NG：メトリック設定が行われていません。"
+        checkIfSetMetric
+    }else{
+        Write-Host $metricSettedLan $metricSettedWifi
+        Write-Host "OK：メトリック設定がは正常に実施されました。"
+    }
+}
+
 function checkRouteSetting(){
     Write-Host ルーター設定を確認します…
     route print >$logFile
@@ -70,6 +88,19 @@ function checkRouteSetting(){
     }
 }
 
+function checkIfSetMetric(){
+    $doSetMetric = (Read-Host メトリック設定を実行しますか？（※管理者権限が必要です）（Y/N）)
+    if($doSetMetric -eq 'Y'){
+        Write-Host "メトリック設定を実行します。管理者権限を許可してください。"
+        setMetric
+        checkMetricSetting
+    }else{
+        Write-Host "では処理を中止します。"
+        Pause
+        exit
+    }
+}
+
 function checkIfSetRoute(){
     $doSetRoute = (Read-Host ルーター設定を実行しますか？（※管理者権限が必要です）（Y/N）)
     if($doSetRoute -eq 'Y'){
@@ -77,10 +108,22 @@ function checkIfSetRoute(){
         setRoute
         checkRouteSetting
     }else{
-        Write-Host "では確認処理を中止します。"
+        Write-Host "では処理を中止します。"
         Pause
         exit
     }
+}
+
+function setMetric(){
+    if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrators")) {
+        $setMetricPsPath = Convert-Path setMetric.ps1
+        Start-Process powershell.exe "-File $setMetricPsPath" -Verb RunAs
+    }else{
+        Write-Host "現在のユーザーには管理者権限がないため、メトリック設定が行えません。"
+    }
+
+    Write-Host "メトリック設定を待ちます…。（10秒後にメトリック設定を再確認します。）"
+    Start-Sleep -s 10
 }
 
 function setRoute(){
@@ -95,6 +138,8 @@ function setRoute(){
     Start-Sleep -s 10
 }
 
+Write-Host ==================================================
+checkMetricSetting
 Write-Host ==================================================
 checkRouteSetting
 Write-Host ==================================================
