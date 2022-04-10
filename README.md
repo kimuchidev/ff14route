@@ -7,8 +7,8 @@ Windows のみ
 
 # 使い方
 
-2. `check14connect.ps1`を PowerShell で実行する。
-3. コマンドログを見て操作するだけ。
+1. `check14connect.ps1`を PowerShell で実行する。
+2. コマンドログを見て操作するだけ。
 
 # パッチ内の処理概要
 
@@ -24,3 +24,6 @@ Windows のみ
 - 作成者は Gaia 住民なので、Gaia でしたテストしていない。
   DCによってはスクリプト内の IP や正規表現を書き換える必要があるかもしれない。
 - Windows のセキュリティ設定によってはダウンロードしたパワーシェルスクリプトは実行できない可能性があるので、その場合はスクリプトの中身をテキストファイルに貼り付けて、同じ名前で名前変更すれば自作スクリプトになって使えるはず。
+※ 参考：
+  - https://docs.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.2
+  - https://qiita.com/Targityen/items/3d2e0b5b0b7b04963750
