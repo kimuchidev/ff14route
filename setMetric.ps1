@@ -1,36 +1,49 @@
 $logFile = 'template.log'
 
-function setMetric(){
-    Get-NetIPAddress|Format-Table >$logFile
+$ip1 = '192','192','192'
+$ip2 = '168','168','168'
+$ip3 = '42' ,'43' ,'165'
+$ip4 = '\d{1,3}','\d{1,3}','\d{1,3}'
 
-    $ifIndexLan = select-string -Path $logFile -Pattern '^\d{1,4}.+192\.168\.42\.\d{1,3}.+$' -AllMatches -Encoding default `
-    | ForEach-Object { $_.Matches.Groups[0].Value } `
-    | select-string -Pattern '\d{1,4}' `
-    | ForEach-Object { $_.Matches.Groups[0].Value }
+$setMetric = 0
+function setMetric($count){
+    if($setMetric -ne 0){
+        return $setMetric
+    }
+
+    Get-NetIPAddress|Format-Table >$logFile
     
-    $ifIndexWifi = select-string -Path $logFile -Pattern '^\d{1,4}.+192\.168\.43\.\d{1,3}.+$' -AllMatches -Encoding default `
+    $ipPattern = $ip1[$count]+'\.'+$ip2[$count]+'\.'+$ip3[$count]+'\.'+$ip4[$count]
+    $command = '^\d{1,4}.+'+$ipPattern+'.+$'
+    $ifIndex = select-string -Path $logFile -Pattern $command -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
     | select-string -Pattern '\d{1,4}' `
     | ForEach-Object { $_.Matches.Groups[0].Value }
 
     Remove-Item $logFile
 
-    if(![string]::IsNullOrEmpty($ifIndexLan)){
-        Write-Host -NoNewline InterfaceIndex が $ifIndexLan の接続のメトリックを最大値に設定します…
-        Write-Host 
-        Set-NetIPInterface -InterfaceIndex $ifIndexLan -InterfaceMetric 9999
+    if(![string]::IsNullOrEmpty($ifIndex)){
+        return $ifIndex
     }else{
-        if(![string]::IsNullOrEmpty($ifIndexWifi)){
-            Write-Host -NoNewline InterfaceIndex が $ifIndexWifi の接続のメトリックを最大値に設定します…
-            Write-Host 
-            Set-NetIPInterface -InterfaceIndex $ifIndexWifi -InterfaceMetric 9999
-        }else{
-            Write-Host テザリング回線を検知できませんでした。テザリングに接続されているかをご確認ください。
-        }
+        return 0
+    }
+}
+
+function setMetricAll(){
+    $setMetric = 0
+    $setMetric = setMetric 0
+    $setMetric = setMetric 1
+    $setMetric = setMetric 2
+    if($setMetric -ne 0){
+        Write-Host -NoNewline InterfaceIndex が $setMetric の接続のメトリックを最大値に設定します…
+        Write-Host 
+        Set-NetIPInterface -InterfaceIndex $setMetric -InterfaceMetric 9999
+    }else{
+        Write-Host テザリング回線を検知できませんでした。テザリングに接続されているかをご確認ください。
     }
 }
 
 Write-Host ==================================================
-setMetric
+setMetricAll
 Write-Host ==================================================
 pause
