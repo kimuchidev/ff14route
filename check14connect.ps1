@@ -161,9 +161,6 @@ function getCount(){
 }
 
 function checkMetricSettingAll($count){
-
-    Write-Host "★DEBUG★" "count" $count
-
     $checkMetricSetting = 0
     Write-Host メトリック設定を確認します…
     $checkMetricSetting = checkMetricSetting $count
@@ -176,9 +173,6 @@ function checkMetricSettingAll($count){
     }
 }
 function checkRouteSettingAll($count){
-
-    Write-Host "★DEBUG★" "count" $count
-
     $checkRouteSetting = 0,0
     Write-Host ルーター設定を確認します…
     checkRouteSetting $count
@@ -197,9 +191,6 @@ function checkRouteSettingAll($count){
     }
 }
 function check14ConnectAll($count){
-
-    Write-Host "★DEBUG★" "count" $count
-
     $check14Connect = 0
     Write-Host FF14の接続を確認します…
     $check14Connect = check14Connect $count
