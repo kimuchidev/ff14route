@@ -1,4 +1,4 @@
-$gameIp = '124.150.157.0'
+$gameIp = '119.252.37.0'
 $logFile = 'template.log'
 $gateWayMask = '255.255.255.0'
 

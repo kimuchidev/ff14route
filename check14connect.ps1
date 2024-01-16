@@ -1,4 +1,4 @@
-$gameIp = '124.150.157.0'
+$gameIp = '119.252.37.0'
 $logFile = 'template.log'
 $gateWayMask = '255.255.255.0'
 
@@ -37,7 +37,7 @@ function checkRouteSetting($count){
     }
     
     $ipPattern = $ip1[$count]+'\.'+$ip2[$count]+'\.'+$ip3[$count]+'\.'+$ip4[$count]
-    $command = '^.*124\.150\.157\.0.+255\.255\.255\.0.+'+$ipPattern+'.+1.+$'
+    $command = '^.*119\.252\.37\.0.+255\.255\.255\.0.+'+$ipPattern+'.+1.+$'
 
     $routedIp = select-string -Path $logFile -Pattern $command -AllMatches -Encoding default `
     | ForEach-Object { $_.Matches.Groups[0].Value } `
@@ -61,8 +61,8 @@ function check14Connect($count){
         return $check14Connect
     }
     
-    netstat -ano|findstr "124.150.157" >$logFile
-    $command = '^.*'+$ip1[$count]+'\.'+$ip2[$count]+'\.'+$ip3[$count]+'\.'+$ip4[$count]+'.+124\.150\.157\.\d{1,3}.+ESTABLISHED.+$'
+    netstat -ano|findstr "119.252.37" >$logFile
+    $command = '^.*'+$ip1[$count]+'\.'+$ip2[$count]+'\.'+$ip3[$count]+'\.'+$ip4[$count]+'.+119\.252\.37\.\d{1,3}.+ESTABLISHED.+$'
     $connected = select-string -Path $logFile -Pattern $command -AllMatches -Encoding default
     Remove-Item $logFile
 
